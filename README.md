@@ -8,3 +8,5 @@ a) "Normal Game" state, - It should be the initial state, identified by the titl
 b) "Facilitated Play" state, - Is identified by the title "Puzzle - Taj Mahal - In Facilitated Play" and is accessed by the "facilitate and play" button; this game state is functionally identical to the "Normal Game" state, but instead of being shuffled it is started in an order that allows it to move to the "Finished" state by successive clicks on pieces "18", "19", "20", "15", "10", "5", "4", "3", "2", "1", "6", "11", "16", "21", "22", "23", and "24";
 <br>
 c) "Finished" State, - Should be the initial state, it is identified by the title "Puzzle - Taj Mahal - Finished" and is accessed by the "finish" button; in this state, the puzzle is complete and locked to the game, with all the pieces visible;
+
+Make sure that both "puzzle.html" and the images folder are on the same workspace.
