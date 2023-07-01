@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<!--
+PUZZLE - Aplicação interativa de manipulação de um puzzle de 5x5 peças, destinado à avaliação de competências, no ano letivo de 2022-2023, do aluno n.º 24728, João Víctor Maia.
+-->
+<html lang="pt">
+	<head>
+		<meta charset="utf-8" />
+		<title>PUZZLE:</title>
+		<style>
+			/* Estiliza as imagens do puzzle.*/
+			img{
+				border-width: 1px; 
+				border-style: solid; 
+				border-image: initial; 
+				border-color: rgb(255, 255, 255) rgb(0, 0, 0) rgb(0, 0, 0) rgb(255, 255, 255); 
+				cursor: pointer;
+			}
+
+			/* Estiliza os botões de ação */
+			button{
+				font:bold 17px arial; 
+				padding: 3px 7px; 
+				margin: 0px 2px 40px 0px; 
+				color: #800000;
+				cursor: pointer;
+			}
+
+			#title{
+				font:bold 22px arial;
+				color: #f0e040;
+				margin-top: 0px;
+			}
+
+			/* Estiliza a div que contém o título e os botões.*/
+			#section1{
+				width: 505px; 
+				margin: 0px auto; 
+				border: 2px solid #ffffff;
+				background-color: #204060; 
+				padding: 20px; 
+				text-align: center; 
+			}
+
+			#section2{
+				line-height: 0px;
+			}
+		</style>
+		<script>
+			//Um array vazio que armazenará a ordem atual das peças do puzzle.
+			var deck = [];
+
+			//Caminho para a pasta das imagens de forma dinâmica (assumindo que a mesma se insere na pasta da aula "IntrodProgWeb_2023")
+			var path = "Images/p"
+
+			//inicialização
+			function inic(){
+				shuffle();
+			}
+
+			//******** input/output ********
+
+			//Troca duas peças do puzzle.
+			function swapElements(deck, indice, peca_fim) {
+				const diff = peca_fim - indice;
+				if (diff === -5 || diff === 5 || (diff === -1 && indice % 5 !== 0) || (diff === 1 && indice % 5 !== 4)) {
+					const substituto = deck[peca_fim];
+					deck[peca_fim] = deck[indice];
+					deck[indice] = substituto;
+				}
+			}
+
+			//Gera o HTML das peças do puzzle com base no array baralho.
+			function generateHtml(deck) {
+				let codhtml = '';
+				for (let cont = 0; cont < 25; cont++) {
+					const imgSrc = `${path}${deck[cont] >= 10 ? deck[cont] : '0' + deck[cont]}.jpg`;
+					const opacity = deck[cont] === 25 ? 'opacity:0;' : '';
+					//Chama a função movePiece(indice) quando uma peça do puzzle é clicada.
+					const onclick = deck[cont] === 25 ? '' : `onclick="movePiece(${cont})"`;
+					codhtml += `<img src="${imgSrc}" style="${opacity}" ${onclick}>`;
+				}
+				return codhtml;
+			}
+
+			//Verifica se o puzzle está completo
+			function isPuzzleComplete(deck) {
+				for (let i = 0; i < deck.length - 1; i++) {
+					if (deck[i] !== i + 1) {
+						return false;
+					}
+				}
+				return deck[deck.length - 1] === 25;
+			}
+
+			//Move a peça selecionada e verifica se o puzzle está completo.
+			function movePiece(indice) {
+				const peca_fim = deck.indexOf(25, 0);
+				swapElements(deck, indice, peca_fim);
+				const codhtml = generateHtml(deck);
+
+				if (isPuzzleComplete(deck)) {
+					end();
+				} else {
+					out("section2", codhtml);
+				}
+			}
+					
+			//Gera uma ordem aleatória das peças do puzzle.
+			function generateBaralho() {
+				const deck = [];
+				while (deck.length < 25) {
+					const p1 = Math.floor(Math.random() * 25) + 1;
+					if (!deck.includes(p1)) {
+						deck.push(p1);
+					}
+				}
+				return deck;
+			}
+
+			//Finaliza o jogo, ao mostrar o puzzle completo.
+			function end(){
+				var cont, codhtml = '';
+					out("title","Puzzle - Taj Mahal - Finished Game");
+
+				for( cont = 1; cont < 26; cont++){
+					if(cont >= 10){
+						codhtml += '<img src="'+ path+''+ cont +'.jpg">'
+					}
+					else{
+						codhtml += '<img src="'+ path +'0'+ cont +'.jpg">'
+					}
+				}
+				out("section2",codhtml);
+			}
+
+			//Embaralha as peças e inicia um novo jogo normal.
+			function shuffle() {
+				deck = generateBaralho();
+				const codhtml = generateHtml(deck);
+				out("title", "Puzzle - Taj Mahal - In Normal Game");
+				out("section2", codhtml);
+			}
+
+			//Configura o jogo no modo facilitado.
+			function easy() {
+				deck = setFacilitatedBaralho();
+				const codhtml = generateHtml(deck);
+				out("title", "Puzzle - Taj Mahal - In Facilitated Game");
+				out("section2", codhtml);
+			}
+
+			//Define uma ordem facilitada das peças do puzzle.
+			function setFacilitatedBaralho() {
+				return [2, 3, 4, 5, 10, 1, 7, 8, 9, 15, 6, 12, 13, 14, 20, 11, 17, 25, 18, 19, 16, 21, 22, 23, 24];
+			}
+
+			//output de um conteúdo num contentor HTML, dados o ID do contentor e o conteúdo (boleano, número ou string)
+			function out(idCont, conteudo){
+				document.getElementById(idCont).innerHTML = conteudo;
+			}
+
+			//********* processos **********
+
+			//referência a um objeto HTML, dado o seu ID
+			function refID(idObj){
+				return document.getElementById(idObj);
+			}
+		</script>
+	</head>
+	<!-- Chama a função shuffle() quando a página é carregada. -->
+	<body onload = "inic()" style = "background-color: #000">
+		<div id = "section1">
+			<h1 id = "title">Puzzle - Taj Mahal - Normal Game</h1>
+			<!-- Chama a função end() quando o botão "Finalizar" é clicado. -->
+			<button onclick = "end()">Finish</button>
+			<!-- Chama a função shuffle() quando o botão "Baralhar e Jogar" é clicado. -->
+			<button onclick = "shuffle()">Shuffle & Play</button>
+			<!-- Chama a função easy() quando o botão "Facilitar e Jogar" é clicado. -->
+			<button onclick = "easy()">Facilitate & Play</button>
+			<div id = "section2">
+		</div>
+	</body>
+</html>
